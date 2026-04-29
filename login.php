@@ -1,19 +1,22 @@
 <?php
-include 'db_connect.php';
+// Database configuration
+$servername = "146.190.144.31:33073"; // IP address and custom port
+$username   = "student_s013";         // Your specific student user
+$password   = "5bIzdgSzmIV77J#KfMz-"; // Your specific password
+$dbname     = "blog_s013";           // Your specific database name
 
-$username = $_POST['username'];
-$password = $_POST['password'];
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-$sql = "SELECT * FROM Users WHERE Username='$username' AND Password='$password'";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // Login Successful
-    echo "Login Successful";
-    // Set session variables or redirect to another page
-} else {
-    // Login Failed
-    echo "Invalid Username or Password";
+// Check connection
+if ($conn->connect_error) {
+    // During development, showing the error is helpful. 
+    // In production, you'd want to log this instead of displaying it.
+    die("Connection failed: " . $conn->connect_error);
 }
-$conn->close();
+
+// Optional: Set charset to utf8mb4 for better character support
+$conn->set_charset("utf8mb4");
+
+echo "Connected successfully to " . $dbname;
 ?>
