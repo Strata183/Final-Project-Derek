@@ -1,9 +1,6 @@
 <?php
 
-$DB_HOST = "localhost";
-$DB_USER = "your_user";
-$DB_PASS = "your_password_here";
-$DB_NAME = "blog_db";
+include 'config.php';
 
 // Create connection 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
