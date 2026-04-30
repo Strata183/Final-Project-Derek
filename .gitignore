@@ -4,3 +4,4 @@ dataset_generation.txt
 .venv
 __pycache__
 secure_search.php
+config.php
