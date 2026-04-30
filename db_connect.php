@@ -1,9 +1,9 @@
 <?php
-$servername = "146.190.144.31";
-$port = 33073;
-$username = "student_s013";
-$password = "5bIzdgSzmIV77J#KfMz-";
-$dbname = "blog_s013";
+
+$DB_HOST = "localhost";
+$DB_USER = "your_user";
+$DB_PASS = "your_password_here";
+$DB_NAME = "blog_db";
 
 // Create connection 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
@@ -14,4 +14,4 @@ if ($conn->connect_error) {
 }
 
 $conn->set_charset("utf8mb4");
-?>
+?
