@@ -186,7 +186,7 @@ SELECT 'RawData', COUNT(*) FROM RawData;
 
 ---
 
-### 6. Sensitive Configuration Exposure
+### 5. Sensitive Information
 **Risk:** Accidentally committing database credentials, or serving config files publicly.
 
 **Mitigation:**
