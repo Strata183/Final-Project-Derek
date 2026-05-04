@@ -1,14 +1,7 @@
 <?php
+require_once __DIR__ . '/config.php';
 
-include 'config.php';
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// Create connection 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
 $conn->set_charset("utf8mb4");
-?

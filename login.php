@@ -1,19 +1,50 @@
 <?php
-include 'db_connect.php';
+require_once __DIR__ . '/db_connect.php';
+require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/csrf.php';
 
-$username = $_POST['username'];
-$password = $_POST['password'];
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-$sql = "SELECT * FROM Users WHERE Username='$username' AND Password='$password'";
-$result = $conn->query($sql);
+$errors = [];
 
-if ($result->num_rows > 0) {
-    // Login Successful
-    echo "Login Successful";
-    // Set session variables or redirect to another page
-} else {
-    // Login Failed
-    echo "Invalid Username or Password";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_validate_post();
+
+    $Username = trim($_POST['Username'] ?? '');
+    $Password = $_POST['Password'] ?? '';
+
+    $stmt = $conn->prepare("SELECT UserID, Username, Password, Admin FROM Users WHERE Username = ?");
+    $stmt->bind_param("s", $Username);
+    $stmt->execute();
+    $user = $stmt->get_result()->fetch_assoc();
+
+    if (!$user || !password_verify($Password, $user['Password'])) {
+        $errors[] = "Invalid username or password.";
+    } else {
+        session_regenerate_id(true);
+        $_SESSION['UserID'] = (int)$user['UserID'];
+        $_SESSION['Username'] = $user['Username'];
+        $_SESSION['Admin'] = (int)$user['Admin'];
+
+        redirect('index.php');
+    }
 }
-$conn->close();
 ?>
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Login</title></head>
+<body>
+<h1>Login</h1>
+
+<?php if ($errors): ?>
+<ul><?php foreach ($errors as $er): ?><li><?= e($er) ?></li><?php endforeach; ?></ul>
+<?php endif; ?>
+
+<form method="post" action="login.php">
+  <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+  <label>Username <input name="Username" required></label><br>
+  <label>Password <input type="password" name="Password" required></label><br>
+  <button type="submit">Login</button>
+</form>
+
+<p><a href="register.html">Register</a></p>
+</body></html>
