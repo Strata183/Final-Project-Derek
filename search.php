@@ -47,7 +47,7 @@ if ($q !== '' || $CategoryID > 0) {
 }
 ?>
 <!doctype html>
-<html><head><meta charset="utf-8"><title>Search</title></head>
+<html><head><meta charset="utf-8"><title>Search</title><link rel="stylesheet" href="styles.css"></head>
 <body>
 <h1>Search</h1>
 <p><a href="index.php">← Back</a></p>

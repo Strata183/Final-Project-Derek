@@ -21,7 +21,7 @@ if ($keyword !== '') {
 }
 ?>
 <!doctype html>
-<html><head><meta charset="utf-8"><title>Search Posts</title></head>
+<html><head><meta charset="utf-8"><title>Search Posts</title><link rel="stylesheet" href="styles.css"></head>
 <body>
 <h1>Search Posts</h1>
 <p><a href="post_search.html">Back</a></p>

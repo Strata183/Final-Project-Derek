@@ -11,7 +11,7 @@ $sql = "
 $result = $conn->query($sql);
 ?>
 <!doctype html>
-<html><head><meta charset="utf-8"><title>All Posts</title></head>
+<html><head><meta charset="utf-8"><title>All Posts</title><link rel="stylesheet" href="styles.css"></head>
 <body>
 <h1>All Posts</h1>
 <p><a href="index.php">Back</a></p>

@@ -11,7 +11,7 @@ $stmt->execute();
 $cats = stmt_fetch_all($stmt);
 ?>
 <!doctype html>
-<html><head><meta charset="utf-8"><title>New Post</title></head>
+<html><head><meta charset="utf-8"><title>New Post</title><link rel="stylesheet" href="styles.css"></head>
 <body>
 <h1>New Post</h1>
 

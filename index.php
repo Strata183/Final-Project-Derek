@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/db_connect.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/auth.php';
@@ -28,7 +25,7 @@ try {
 }
 ?>
 <!doctype html>
-<html><head><meta charset="utf-8"><title>Blog</title></head>
+<html><head><meta charset="utf-8"><title>Blog</title><link rel="stylesheet" href="styles.css"></head>
 <body>
 <h1>Blog</h1>
 

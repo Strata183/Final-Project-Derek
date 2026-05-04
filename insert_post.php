@@ -38,7 +38,7 @@ if (!$errors) {
 }
 ?>
 <!doctype html>
-<html><head><meta charset="utf-8"><title>New Post - Error</title></head>
+<html><head><meta charset="utf-8"><title>New Post - Error</title><link rel="stylesheet" href="styles.css"></head>
 <body>
 <h1>New Post</h1>
 <ul><?php foreach ($errors as $er): ?><li><?= e($er) ?></li><?php endforeach; ?></ul>

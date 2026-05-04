@@ -46,7 +46,7 @@ $stmt3->execute();
 $comments = stmt_fetch_all($stmt3);
 ?>
 <!doctype html>
-<html><head><meta charset="utf-8"><title><?= e($post['Title']) ?></title></head>
+<html><head><meta charset="utf-8"><title><?= e($post['Title']) ?></title><link rel="stylesheet" href="styles.css"></head>
 <body>
 <p><a href="index.php">← Back</a></p>
 
