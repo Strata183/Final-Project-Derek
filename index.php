@@ -35,6 +35,7 @@ try {
   <?php if (is_logged_in()): ?>
     Logged in as <?= e(current_username()) ?> |
     <a href="new_post.php">New Post</a> |
+    <a href="change_password.php">Change Password</a> |
     <a href="logout.php">Logout</a>
   <?php else: ?>
     <a href="login.php">Login</a> |
