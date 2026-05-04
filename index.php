@@ -1,20 +1,31 @@
 <?php
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/db_connect.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/auth.php';
 
-$stmt = $conn->prepare("
-  SELECT p.PostID, p.Title, p.Content, p.CreatedAt,
-         u.Username,
-         c.CategoryName
-  FROM Posts p
-  JOIN Users u ON u.UserID = p.UserID
-  LEFT JOIN Categories c ON c.CategoryID = p.CategoryID
-  ORDER BY p.CreatedAt DESC
-  LIMIT 50
-");
-$stmt->execute();
-$posts = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$posts = [];
+$loadError = '';
+
+try {
+    $stmt = $conn->prepare("
+      SELECT p.PostID, p.Title, p.Content, p.CreatedAt,
+             u.Username,
+             c.CategoryName
+      FROM Posts p
+      JOIN Users u ON u.UserID = p.UserID
+      LEFT JOIN Categories c ON c.CategoryID = p.CategoryID
+      ORDER BY p.CreatedAt DESC
+      LIMIT 50
+    ");
+    $stmt->execute();
+    $posts = stmt_fetch_all($stmt);
+} catch (mysqli_sql_exception $e) {
+    http_response_code(500);
+    $loadError = 'Could not load posts: ' . $e->getMessage();
+}
 ?>
 <!doctype html>
 <html><head><meta charset="utf-8"><title>Blog</title></head>
@@ -35,6 +46,13 @@ $posts = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 </nav>
 
 <hr>
+
+<?php if ($loadError): ?>
+  <p><?= e($loadError) ?></p>
+  <p>Make sure the database credentials in config.php are correct and index.sql has been run.</p>
+<?php elseif (!$posts): ?>
+  <p>No posts yet.</p>
+<?php endif; ?>
 
 <?php foreach ($posts as $p): ?>
   <article>

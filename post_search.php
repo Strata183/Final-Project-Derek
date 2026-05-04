@@ -17,7 +17,7 @@ if ($keyword !== '') {
     ");
     $stmt->bind_param("ss", $like, $like);
     $stmt->execute();
-    $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $results = stmt_fetch_all($stmt);
 }
 ?>
 <!doctype html>

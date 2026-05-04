@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare("SELECT UserID, Username, Password, Admin FROM Users WHERE Username = ?");
     $stmt->bind_param("s", $Username);
     $stmt->execute();
-    $user = $stmt->get_result()->fetch_assoc();
+    $user = stmt_fetch_one($stmt);
 
     if (!$user || !password_verify($Password, $user['Password'])) {
         $errors[] = "Invalid username or password.";

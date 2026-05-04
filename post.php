@@ -17,7 +17,7 @@ $stmt = $conn->prepare("
 ");
 $stmt->bind_param("i", $PostID);
 $stmt->execute();
-$post = $stmt->get_result()->fetch_assoc();
+$post = stmt_fetch_one($stmt);
 if (!$post) { http_response_code(404); exit("Post not found"); }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -43,7 +43,7 @@ $stmt3 = $conn->prepare("
 ");
 $stmt3->bind_param("i", $PostID);
 $stmt3->execute();
-$comments = $stmt3->get_result()->fetch_all(MYSQLI_ASSOC);
+$comments = stmt_fetch_all($stmt3);
 ?>
 <!doctype html>
 <html><head><meta charset="utf-8"><title><?= e($post['Title']) ?></title></head>

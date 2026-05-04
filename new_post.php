@@ -8,7 +8,7 @@ require_login();
 
 $stmt = $conn->prepare("SELECT CategoryID, CategoryName FROM Categories ORDER BY CategoryName ASC");
 $stmt->execute();
-$cats = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$cats = stmt_fetch_all($stmt);
 ?>
 <!doctype html>
 <html><head><meta charset="utf-8"><title>New Post</title></head>

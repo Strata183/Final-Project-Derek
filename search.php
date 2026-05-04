@@ -43,7 +43,7 @@ if ($q !== '' || $CategoryID > 0) {
     }
 
     $stmt->execute();
-    $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $results = stmt_fetch_all($stmt);
 }
 ?>
 <!doctype html>
