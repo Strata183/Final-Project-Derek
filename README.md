@@ -1,3 +1,138 @@
+# SQL Scripts
+
+
+CREATE TABLE Users (
+    UserID INT AUTO_INCREMENT,
+    Username VARCHAR(50) NOT NULL,
+    Password VARCHAR(255),
+    Email VARCHAR(100) NOT NULL,
+    Admin BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (UserID)
+);
+
+
+CREATE TABLE Categories (
+    CategoryID INT AUTO_INCREMENT PRIMARY KEY,
+    CategoryName VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE Posts (
+    PostID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT,
+    CategoryID INT,
+    Title VARCHAR(255) NOT NULL,
+    Content TEXT NOT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+);
+
+CREATE TABLE Tags (
+    TagID INT AUTO_INCREMENT PRIMARY KEY,
+    TagName VARCHAR(50) NOT NULL UNIQUE
+);
+
+
+CREATE TABLE Post_Tags (
+    PostID INT,
+    TagID INT,
+    PRIMARY KEY (PostID, TagID),
+    FOREIGN KEY (PostID) REFERENCES Posts(PostID) ON DELETE CASCADE,
+    FOREIGN KEY (TagID) REFERENCES Tags(TagID) ON DELETE CASCADE
+);
+
+CREATE TABLE Comments (
+    CommentID INT AUTO_INCREMENT PRIMARY KEY,
+    PostID INT,
+    UserID INT,
+    Comment TEXT NOT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (PostID) REFERENCES Posts(PostID) ON DELETE CASCADE,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+
+
+CREATE TABLE RawData (
+    UserID INT,
+    Username VARCHAR(50),
+    Password VARCHAR(255),
+    Email VARCHAR(100),
+    Admin BOOLEAN,
+    PostID INT,
+    Title VARCHAR(255),
+    Content TEXT,
+    CategoryID INT,
+    CategoryName VARCHAR(100),
+    CommentID INT,
+    Comment TEXT,
+    TagID INT,
+    TagName VARCHAR(50)
+);
+
+INSERT INTO Users (UserID, Username, Password, Email, Admin)
+SELECT 
+    UserID,
+    MAX(Username),
+    MAX(Password),
+    MAX(Email),
+    MAX(Admin)
+FROM RawData
+WHERE UserID IS NOT NULL
+GROUP BY UserID;
+
+INSERT INTO Categories (CategoryID, CategoryName)
+SELECT 
+    CategoryID,
+    MAX(CategoryName)
+FROM RawData
+WHERE CategoryID IS NOT NULL
+GROUP BY CategoryID;
+
+INSERT INTO Tags (TagID, TagName)
+SELECT 
+    TagID,
+    MAX(TagName)
+FROM RawData
+WHERE TagID IS NOT NULL
+GROUP BY TagID;
+
+INSERT INTO Posts (PostID, UserID, CategoryID, Title, Content)
+SELECT 
+    PostID,
+    MAX(UserID),
+    MAX(CategoryID),
+    MAX(Title),
+    MAX(Content)
+FROM RawData
+WHERE PostID IS NOT NULL
+GROUP BY PostID;
+
+INSERT INTO Comments (CommentID, PostID, UserID, Comment)
+SELECT 
+    CommentID,
+    MAX(PostID),
+    MAX(UserID),
+    MAX(Comment)
+FROM RawData
+WHERE CommentID IS NOT NULL
+GROUP BY CommentID;
+
+INSERT INTO Post_Tags (PostID, TagID)
+SELECT DISTINCT PostID, TagID
+FROM RawData
+WHERE TagID IS NOT NULL AND PostID IS NOT NULL;
+
+SELECT 'Users' as table_name, COUNT(*) as row_count FROM Users
+UNION ALL
+SELECT 'Posts', COUNT(*) FROM Posts
+UNION ALL
+SELECT 'RawData', COUNT(*) FROM RawData;
+
+
+
+
 # Security Report
 
 
@@ -28,20 +163,8 @@
 
 ---
 
-### 3. Session Security
-**Risk:** Session fixation/hijacking can allow account takeover.
 
-**Mitigation:**
-- Call `session_regenerate_id(true)` after successful login.
-- Use secure cookie flags in php.ini or via `session_set_cookie_params`:
-  - `HttpOnly`, `Secure` (if HTTPS), `SameSite=Lax/Strict`.
-- Destroy session on logout.
-
-**Status in provided code:** Regenerates ID on login; logout destroys session.
-
----
-
-### 4. Cross-Site Scripting (XSS)
+### 3. Cross-Site Scripting (XSS)
 **Risk:** If post/comment content is rendered without escaping, a user can inject scripts that execute in other users’ browsers.
 
 **Mitigation:**
@@ -53,12 +176,11 @@
 ---
 
 
-### 5. Authorization (AuthZ) / Access Control
+### 4. Authorization 
 **Risk:** Users performing actions they should not be allowed to (e.g., posting without login, admin-only actions).
 
 **Mitigation:**
 - Require login for create-post and comment actions.
-- For admin-only features, check `Admin` flag server-side (never trust the client).
 
 **Status in provided code:** `require_login()` enforced for creating posts and commenting.
 
@@ -72,5 +194,5 @@
 - Ensure the web server does not serve PHP source as plaintext (PHP module enabled).
 - Use environment variables where possible.
 
-**Status:** `config.php` is excluded via `.gitignore` (good).
+**Status:** `config.php` is excluded via `.gitignore`.
 
