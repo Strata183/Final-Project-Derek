@@ -1,27 +1,44 @@
 <?php
-include 'db_connect.php';
+require_once __DIR__ . '/db_connect.php';
+require_once __DIR__ . '/helpers.php';
 
-function searchPosts($keyword) {
-    global $conn;
-    
-    // Directly inserting the keyword into the SQL query
-    $sql = "SELECT * FROM BlogPosts WHERE Title LIKE '%$keyword%' OR Content LIKE '%$keyword%'";
+$keyword = trim($_GET['keyword'] ?? '');
+$results = [];
 
-    // Execute the query
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        // Fetch and display all posts containing the keyword
-        while($row = $result->fetch_assoc()) {
-            echo "PostID: " . $row["PostID"]. " - Title: " . $row["Title"]. " - Content: " . $row["Content"]. "<br>";
-        }
-    } else {
-        echo "No results found";
-    }
+if ($keyword !== '') {
+    $like = '%' . $keyword . '%';
+    $stmt = $conn->prepare("
+        SELECT p.PostID, p.Title, p.Content, p.CreatedAt, u.Username
+        FROM Posts p
+        JOIN Users u ON u.UserID = p.UserID
+        WHERE p.Title LIKE ? OR p.Content LIKE ?
+        ORDER BY p.CreatedAt DESC
+        LIMIT 50
+    ");
+    $stmt->bind_param("ss", $like, $like);
+    $stmt->execute();
+    $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
-
-// Example usage
-searchPosts("example_keyword");
-
-$conn->close();
 ?>
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Search Posts</title></head>
+<body>
+<h1>Search Posts</h1>
+<p><a href="post_search.html">Back</a></p>
+
+<?php if ($keyword === ''): ?>
+  <p>Enter a keyword to search.</p>
+<?php elseif (!$results): ?>
+  <p>No results found.</p>
+<?php else: ?>
+  <ul>
+    <?php foreach ($results as $row): ?>
+      <li>
+        <a href="post.php?PostID=<?= (int)$row['PostID'] ?>"><?= e($row['Title']) ?></a>
+        by <?= e($row['Username']) ?>
+        on <?= e($row['CreatedAt']) ?>
+      </li>
+    <?php endforeach; ?>
+  </ul>
+<?php endif; ?>
+</body></html>

@@ -15,7 +15,7 @@ $cats = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <body>
 <h1>New Post</h1>
 
-<form method="post" action="insert_post.php">
+<form method="post" action="create_post.php">
   <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
 
   <label>Title<br>

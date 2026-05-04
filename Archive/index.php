@@ -26,11 +26,11 @@ $posts = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
   <a href="search.html">Search</a> |
   <?php if (is_logged_in()): ?>
     Logged in as <?= e(current_username()) ?> |
-    <a href="new_post.php">New Post</a> |
+    <a href="new_post.html">New Post</a> |
     <a href="logout.php">Logout</a>
   <?php else: ?>
-    <a href="login.php">Login</a> |
-    <a href="register.php">Register</a>
+    <a href="login.html">Login</a> |
+    <a href="register.html">Register</a>
   <?php endif; ?>
 </nav>
 
@@ -44,7 +44,7 @@ $posts = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
       in <?= e($p['CategoryName'] ?? 'Uncategorized') ?>
       on <?= e($p['CreatedAt']) ?>
     </small>
-    <p><?= nl2br(e(excerpt($p['Content']))) ?></p>
+    <p><?= nl2br(e(mb_strimwidth($p['Content'], 0, 300, '...'))) ?></p>
   </article>
   <hr>
 <?php endforeach; ?>

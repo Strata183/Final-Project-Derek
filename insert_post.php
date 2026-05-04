@@ -9,7 +9,7 @@ require_login();
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('new_post.html');
+    redirect('new_post.php');
 }
 
 csrf_validate_post();
@@ -42,5 +42,5 @@ if (!$errors) {
 <body>
 <h1>New Post</h1>
 <ul><?php foreach ($errors as $er): ?><li><?= e($er) ?></li><?php endforeach; ?></ul>
-<p><a href="new_post.html">Go back</a></p>
+<p><a href="new_post.php">Go back</a></p>
 </body></html>

@@ -83,7 +83,7 @@ $comments = $stmt3->get_result()->fetch_all(MYSQLI_ASSOC);
     <button type="submit">Post Comment</button>
   </form>
 <?php else: ?>
-  <p><a href="login.php">Login</a> to comment.</p>
+  <p><a href="login.html">Login</a> to comment.</p>
 <?php endif; ?>
 
 </body></html>
