@@ -13,13 +13,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $Username = trim($_POST['Username'] ?? '');
     $Password = $_POST['Password'] ?? '';
 
-    $stmt = $conn->prepare("SELECT UserID, Username, Password, Admin FROM Users WHERE Username = ?");
+    $stmt = $conn->prepare("
+        SELECT UserID, Username, Password, Admin
+        FROM Users
+        WHERE Username = ? AND Password IS NOT NULL AND Password <> ''
+        ORDER BY UserID DESC
+        LIMIT 1
+    ");
     $stmt->bind_param("s", $Username);
     $stmt->execute();
     $user = stmt_fetch_one($stmt);
 
     if (!$user || !password_verify($Password, $user['Password'])) {
-        $errors[] = "Invalid username or password.";
+        $errors[] = "Invalid username or password. Imported sample users cannot log in unless they have a registered password.";
     } else {
         session_regenerate_id(true);
         $_SESSION['UserID'] = (int)$user['UserID'];

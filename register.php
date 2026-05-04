@@ -19,6 +19,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strlen($Password) < 8) $errors[] = "Password must be at least 8 characters.";
 
     if (!$errors) {
+        $stmt = $conn->prepare("
+            SELECT UserID
+            FROM Users
+            WHERE (Username = ? OR Email = ?) AND Password IS NOT NULL AND Password <> ''
+            LIMIT 1
+        ");
+        $stmt->bind_param("ss", $Username, $Email);
+        $stmt->execute();
+        if (stmt_fetch_one($stmt)) {
+            $errors[] = "That username or email is already registered.";
+        }
+    }
+
+    if (!$errors) {
         $hash = password_hash($Password, PASSWORD_DEFAULT);
         $Admin = 0;
 
